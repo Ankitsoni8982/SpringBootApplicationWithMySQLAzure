@@ -3,10 +3,10 @@ kind: Deployment
 metadata:
   name: springboot-crud-deployment
 spec:
+  replicas: 3
   selector:
     matchLabels:
       app: springboot-k8s-mysql
-  replicas: 3
   template:
     metadata:
       labels:
@@ -14,38 +14,30 @@ spec:
     spec:
       containers:
         - name: springboot-crud-k8s
-          image: ankit8983/springbootapp:latest
+          image: kubernatetraining.azurecr.io/ankit8983/springbootapp:latest
           ports:
-            - containerPort: 8080
-          env:   # Setting Enviornmental Variables
-            - name: DB_HOST   # Setting Database host address from configMap
-              value : ankitmysqlazure.mysql.database.azure.com
-
-            - name: DB_NAME  # Setting Database name from configMap
-              value : ankitmysql
-
-            - name: DB_USERNAME  # Setting Database username from Secret
-              value : AnkitSQL
-
-            - name: DB_PASSWORD # Setting Database password from Secret
-              value : Anjali@123
-			  
-			- name: DB_PORT # Setting Database password from Secret
-			  value : 3306
-			  
-
+            - containerPort: 12001   # ✅ match Spring Boot app port
+          env:   # Setting Environmental Variables
+            - name: DB_HOST
+              value: "ankitmysqlazure.mysql.database.azure.com"
+            - name: DB_NAME
+              value: "ankitmysql"
+            - name: DB_USERNAME
+              value: "AnkitSQL"
+            - name: DB_PASSWORD
+              value: "Anjali@123"
+            - name: DB_PORT
+              value: "3306"
 ---
-
-apiVersion: v1 # Kubernetes API version
-kind: Service # Kubernetes resource kind we are creating
-metadata: # Metadata of the resource kind we are creating
+apiVersion: v1
+kind: Service
+metadata:
   name: springboot-crud-svc
 spec:
   selector:
     app: springboot-k8s-mysql
   ports:
-    - protocol: "TCP"
-      port: 8080 # The port that the service is running on in the cluster
-      targetPort: 8080 # The port exposed by the service
-  type: LoadBalancer # type of the service.
-
+    - protocol: TCP
+      port: 8080        # ✅ cluster/external port
+      targetPort: 12001 # ✅ forwards to container port
+  type: LoadBalancer
