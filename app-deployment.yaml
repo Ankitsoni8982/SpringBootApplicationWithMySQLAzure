@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: springboot-crud-k8s
-          image: kubernatetraining.azurecr.io/ankit8983/springbootapp:latest
+          image: kubernatetraining.azurecr.io/springbootapp:latest
           ports:
             - containerPort: 12001   # ✅ match Spring Boot app port
           env:   # Setting Environmental Variables
